@@ -3,6 +3,7 @@ import gradio as gr
 # 注意：本示例仅为界面展示，不实际下载或加载 wav2vec2-large-xlsr-kn 模型权重。
 # 在真实部署场景中，可在此处接入 HuggingFace Transformers 与本地或远程模型服务。
 
+
 def dummy_asr(audio, language, sample_rate):
     """占位推理函数：模拟 Kannada 语音识别流程，不进行真实推理。"""
     if audio is None:
@@ -17,6 +18,7 @@ def dummy_asr(audio, language, sample_rate):
         f"· 音频时长：{duration_str}\n\n"
         "在实际系统中，该区域将展示模型输出的转写文本，并可附带词错误率 (WER)、置信度统计以及与参考文本的对齐结果。"
     )
+
 
 with gr.Blocks(title="Wav2Vec2-Large-XLSR-53 Kannada WebUI") as demo:
     gr.Markdown(
@@ -35,7 +37,11 @@ with gr.Blocks(title="Wav2Vec2-Large-XLSR-53 Kannada WebUI") as demo:
                 value="Kannada (kn)",
             )
             sample_rate = gr.Slider(
-                label="采样率 (Hz)", minimum=8000, maximum=48000, step=1000, value=16000
+                label="采样率 (Hz)",
+                minimum=8000,
+                maximum=48000,
+                step=1000,
+                value=16000,
             )
             audio_in = gr.Audio(
                 label="上传或录制待识别音频 (单声道)",
@@ -55,14 +61,17 @@ with gr.Blocks(title="Wav2Vec2-Large-XLSR-53 Kannada WebUI") as demo:
     def _wrapper(audio_path, lang, sr):
         if audio_path is None:
             return "请先在左侧上传或录制音频。"
+
         class _DummyAudio:
             def __init__(self, path):
                 self.path = path
                 self.duration = 0.0
+
         audio = _DummyAudio(audio_path)
         return dummy_asr(audio, lang, int(sr))
 
     run_btn.click(_wrapper, inputs=[audio_in, language, sample_rate], outputs=[text_out])
+
 
 if __name__ == "__main__":
     # 使用 7862 端口以避免与其他演示 WebUI 冲突
